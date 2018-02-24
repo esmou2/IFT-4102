@@ -780,7 +780,7 @@ class CornerHeuristicPacman(testClasses.TestCase):
             grades.addMessage('FAIL: Inadmissible heuristic')
             return False
         path = search.astar(problem, searchAgents.cornersHeuristic)
-        print "path:", path
+        # print "path:", path
         print "path length:", len(path)
         cost = problem.getCostOfActions(path)
         if cost > true_cost:
