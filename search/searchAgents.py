@@ -290,7 +290,6 @@ class CornersProblem(search.SearchProblem):
         # in initializing the problem
         "*** YOUR CODE HERE ***"
         self.visited_corners = set()
-        self.game_state = startingGameState
 
     def getStartState(self):
         """
@@ -374,16 +373,22 @@ def cornersHeuristic(state, problem):
     current_position = state[0]
     visited_corners = set(state[1])
     "*** YOUR CODE HERE ***"
-    if current_position in corners: return 0
     if len(state[1]) == 4: return 0
 
-    unvisited_corner = list(set(corners) - visited_corners)
-    min_dist = mazeDistance(current_position, unvisited_corner[0], problem.game_state)
-    for corner in unvisited_corner[1:]:
-        if mazeDistance(current_position, corner, problem.game_state) < min_dist:
-            min_dist = mazeDistance(current_position, corner, problem.game_state)
+    unvisited_cornes = list(set(corners) - visited_corners)
+    distance = 0
+    while len(unvisited_cornes) != 0:
+        closest_corner = unvisited_cornes[0]
+        min_distance = util.manhattanDistance(current_position, closest_corner)
+        for corner in unvisited_cornes[1:]:
+            if min_distance > util.manhattanDistance(current_position, corner):
+                closest_corner = corner
+                min_distance = util.manhattanDistance(current_position, closest_corner)
+        distance += min_distance
+        unvisited_cornes.remove(closest_corner)
+        current_position = closest_corner
 
-    return int(min_dist)
+    return int(distance)
 
 
 class AStarCornersAgent(SearchAgent):
