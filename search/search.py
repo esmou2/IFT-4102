@@ -72,6 +72,7 @@ def tinyMazeSearch(problem):
     w = Directions.WEST
     return  [s, s, w, s, w, w, s, w]
 
+
 def depthFirstSearch(problem):
     """
     Search the deepest nodes in the search tree first.
@@ -87,17 +88,87 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    stack_nodes = util.Stack()
+    visited_nodes = set()
+    stack_nodes.push([(problem.getStartState(), "")])
+    path = []
+    while not stack_nodes.isEmpty():
+        path = stack_nodes.pop()
+        current_node = path[-1]
+
+        if problem.isGoalState(current_node[0]):
+            break
+
+        if not (current_node[0] in visited_nodes):
+            visited_nodes.add(current_node[0])
+            successors = problem.getSuccessors(current_node[0])
+            for node in successors:
+                if not node[0] in visited_nodes:
+                    new_path = list(path)
+                    new_path.append(node)
+                    stack_nodes.push(new_path)
+    directions = []
+    for node in path[1:]:
+        directions.append(node[1])
+    return directions
+
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    queue_nodes = util.Queue()
+    visited_nodes = set()
+    queue_nodes.push([(problem.getStartState(), "")])
+    path = []
+
+    while not queue_nodes.isEmpty():
+        path = queue_nodes.pop()
+        current_node = path[-1]
+
+        if problem.isGoalState(current_node[0]):
+            break
+
+        if not (current_node[0] in visited_nodes):
+            visited_nodes.add(current_node[0])
+            successors = problem.getSuccessors(current_node[0])
+            for node in reversed(successors):
+                if not node[0] in visited_nodes:
+                    new_path = list(path)
+                    new_path.append(node)
+                    queue_nodes.push(new_path)
+    directions = []
+    for node in path[1:]:
+        directions.append(node[1])
+    return directions
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    priority_queue_nodes = util.PriorityQueue()
+    visited_nodes = set()
+    priority_queue_nodes.push([(problem.getStartState(), "", 0)], 0)
+    path = []
+
+    while not priority_queue_nodes.isEmpty():
+        path = priority_queue_nodes.pop()
+        current_node = path[-1]
+
+        if problem.isGoalState(current_node[0]):
+            break
+
+        if not (current_node[0] in visited_nodes):
+            visited_nodes.add(current_node[0])
+            successors = problem.getSuccessors(current_node[0])
+            for node in reversed(successors):
+                if not node[0] in visited_nodes:
+                    new_path = list(path)
+                    new_path.append(node)
+                    priority_queue_nodes.push(new_path, problem.getCostOfActions([x[1] for x in new_path][1:]))
+    directions = []
+    for node in path[1:]:
+        directions.append(node[1])
+    return directions
+
 
 def nullHeuristic(state, problem=None):
     """
@@ -106,11 +177,37 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
+
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    def _heuristic(path):
+        return heuristic(path[-1][0], problem) + problem.getCostOfActions([x[1] for x in path][1:])
 
+    priority_queue_nodes = util.PriorityQueueWithFunction(_heuristic)
+    visited_nodes = set()
+    priority_queue_nodes.push([(problem.getStartState(), "", 0)])
+    path = []
+
+    while not priority_queue_nodes.isEmpty():
+        path = priority_queue_nodes.pop()
+        current_node = path[-1]
+
+        if problem.isGoalState(current_node[0]):
+            break
+
+        if not (current_node[0] in visited_nodes):
+            visited_nodes.add(current_node[0])
+            successors = problem.getSuccessors(current_node[0])
+            for node in reversed(successors):
+                if not node[0] in visited_nodes:
+                    new_path = list(path)
+                    new_path.append(node)
+                    priority_queue_nodes.push(new_path)
+    directions = []
+    for node in path[1:]:
+        directions.append(node[1])
+    return directions
 
 # Abbreviations
 bfs = breadthFirstSearch
