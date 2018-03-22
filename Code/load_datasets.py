@@ -130,11 +130,11 @@ def load_congressional_dataset(train_ratio):
 
 	# La fonction doit retourner 4 structures de données de type Numpy.
     return (train, train_labels, test, test_labels)
-	
+
 
 def load_monks_dataset(numero_dataset):
     """Cette fonction a pour but de lire le dataset Monks
-    
+
     Notez bien que ce dataset est différent des autres d'un point de vue
     exemples entrainement et exemples de tests.
     Pour ce dataset, nous avons 3 différents sous problèmes, et pour chacun
@@ -150,20 +150,44 @@ def load_monks_dataset(numero_dataset):
         les fichiers sont tous dans le dossier datasets
     Retours:
         Cette fonction doit retourner 4 matrices de type Numpy, train, train_labels, test, et test_labels
-        
+
         - train : une matrice numpy qui contient les exemples qui vont etre utilisés pour l'entrainement, chaque 
         ligne dans cette matrice représente un exemple (ou instance) d'entrainement.
         - train_labels : contient les labels (ou les étiquettes) pour chaque exemple dans train, de telle sorte
           que : train_labels[i] est le label (ou l'etiquette) pour l'exemple train[i]
-        
+
         - test : une matrice numpy qui contient les exemples qui vont etre utilisés pour le test, chaque 
         ligne dans cette matrice représente un exemple (ou instance) de test.
         - test_labels : contient les labels (ou les étiquettes) pour chaque exemple dans test, de telle sorte
           que : test_labels[i] est le label (ou l'etiquette) pour l'exemple test[i]
     """
-	
-	
+
+
 	# TODO : votre code ici, vous devez lire les fichiers .train et .test selon l'argument numero_dataset
 
-    # La fonction doit retourner 4 matrices (ou vecteurs) de type Numpy. 
+    f_train = open('datasets/monks-' + `numero_dataset` + '.train', 'r')
+    f_test = open('datasets/monks-' + `numero_dataset` + '.test', 'r')
+
+
+    data_train = np.genfromtxt(f_train, delimiter=" ", dtype=str)
+    data_test = np.genfromtxt(f_test, delimiter=" ", dtype=str)
+
+    random.shuffle(data_train)
+
+    train = []
+    train_label = []
+    for i in range(len(data_train)):
+        line = data_train[i]
+        train.append(line[1:-1])
+        train_label.append(line[-1])
+
+    random.shuffle(data_test)
+
+    test = []
+    test_label = []
+    for i in range(len(data_test)):
+        line = data_test[i]
+        test.append(line[1:-1])
+        test_label.append(line[-1])
+    # La fonction doit retourner 4 matrices (ou vecteurs) de type Numpy.
     return (train, train_labels, test, test_labels)

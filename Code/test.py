@@ -1,35 +1,32 @@
 import numpy as np
 import random
 
-train_ratio = 0.95
+numero_dataset = 1
 
 random.seed(1)
 
-conversion_labels = {'republican' : 0, 'democrat' : 1, 'n' : 0, 'y' : 1, '?' : 2}
-f = open('datasets/house-votes-84.data', 'r')
+f_train = open('datasets/monks-' + `numero_dataset` + '.train', 'r')
+f_test = open('datasets/monks-' + `numero_dataset` + '.test', 'r')
 
-data = np.genfromtxt(f, delimiter=",", dtype=None)
 
-attributes = []
-classes = []
-for i in range(len(data)):
-    line = data[i]
-    attr = []
-    classes.append(conversion_labels[line[0]])
-    for j in range(len(line) - 1):
-        attr.append(conversion_labels[line[j + 1]])
-    attributes.append(attr)
+data_train = np.genfromtxt(f_train, delimiter=" ", dtype=str)
+data_test = np.genfromtxt(f_test, delimiter=" ", dtype=str)
 
-random.shuffle(data)
+random.shuffle(data_train)
 
-number_of_trains = int(train_ratio * len(data));
-number_of_tests = len(data) - number_of_trains;
+train = []
+train_label = []
+for i in range(len(data_train)):
+    line = data_train[i]
+    train.append(line[1:-1])
+    train_label.append(line[-1])
 
-train = attributes[:number_of_trains]
-train_labels = classes[:number_of_trains]
+random.shuffle(data_test)
 
-test = attributes[:number_of_tests]
-test = classes[:number_of_tests]
-
-print train
+test = []
+test_label = []
+for i in range(len(data_test)):
+    line = data_test[i]
+    test.append(line[1:-1])
+    test_label.append(line[-1])
 
