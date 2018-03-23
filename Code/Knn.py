@@ -1,90 +1,99 @@
-"""
-Vous allez definir une classe pour chaque algorithme que vous allez développer,
-votre classe doit contenit au moins les 3 methodes definies ici bas, 
-	* train 	: pour entrainer le modèle sur l'ensemble d'entrainement
-	* predict 	: pour prédire la classe d'un exemple donné
-	* test 		: pour tester sur l'ensemble de test
-vous pouvez rajouter d'autres méthodes qui peuvent vous etre utiles, mais moi
-je vais avoir besoin de tester les méthodes test, predict et test de votre code.
-"""
-
 import numpy as np
+# -*- coding: utf-8 -*-
+
+class Knn:
+
+	def __init__(self, k, **kwargs):
+		self.k = k
 
 
-# le nom de votre classe
-# BayesNaif pour le modèle bayesien naif
-# Knn pour le modèle des k plus proches voisins
+	def train(self, train, train_labels, x): #vous pouvez rajouter d'autres attribus au besoin
+		labels = list(set(train_labels))
+		n = len(labels)
 
-class Knn: #nom de la class à changer
+		data_size = train.shape[0]
 
-	def __init__(self, **kwargs):
-		"""
-		c'est un Initializer. 
-		Vous pouvez passer d'autre paramètres au besoin,
-		c'est à vous d'utiliser vos propres notations
-		"""
+		neighbors_indexes = getKNearestNeighbor(x[:-1], self.k, train)
 
+		self.test(train, train_labels)
 
-	def train(self, train, train_labels): #vous pouvez rajouter d'autres attribus au besoin
-		"""
-		c'est la méthode qui va entrainer votre modèle,
-		train est une matrice de type Numpy et de taille nxm, avec 
-		n : le nombre d'exemple d'entrainement dans le dataset
-		m : le mobre d'attribus (le nombre de caractéristiques)
-
-		train_labels : est une matrice numpy de taille nx1
-
-		vous pouvez rajouter d'autres arguments, il suffit juste de
-		les expliquer en commentaire
+		return getPrediction(neighbors_indexes)
 
 
-
-		------------
-		Après avoir fait l'entrainement, faites maintenant le test sur 
-		les données d'entrainement
-		IMPORTANT :
-		Vous devez afficher ici avec la commande print() de python,
-		- la matrice de confision (confusion matrix)
-		- l'accuracy
-		- la précision (precision)
-		- le rappel (recall)
-
-		Bien entendu ces tests doivent etre faits sur les données d'entrainement
-		nous allons faire d'autres tests sur les données de test dans la méthode test()
-		"""
 
 	def predict(self, exemple, label):
-		"""
-		Prédire la classe d'un exemple donné en entrée
-		exemple est de taille 1xm
+		labels = list(set(exemple))
+		votes = [0] * len(labels)
+		for n in range(len(exemple)):
+			for i in range(len(labels)):
+				if exemple[n] == labels[i]:
+					votes[i] += 1
+		return labels[votes.index(max(votes))] == label
 
-		si la valeur retournée est la meme que la veleur dans label
-		alors l'exemple est bien classifié, si non c'est une missclassification
-
-		"""
 
 	def test(self, test, test_labels):
-		"""
-		c'est la méthode qui va tester votre modèle sur les données de test
-		l'argument test est une matrice de type Numpy et de taille nxm, avec 
-		n : le nombre d'exemple de test dans le dataset
-		m : le mobre d'attribus (le nombre de caractéristiques)
+		error_count = 0
 
-		test_labels : est une matrice numpy de taille nx1
+		n = len(set(test_labels))
+		confusion_matrix = np.zeros((n,n))
+		nb_attribution = [0] * n
+		nb_correct_attribution = [0] * n
+		nb_class_element = [0] * n
 
-		vous pouvez rajouter d'autres arguments, il suffit juste de
-		les expliquer en commentaire
+		for i in range(len(test)):
+			prediction = self.train(test, test_labels, test[i,:])
+			if prediction != test_labels[i]:
+				error_count += 1
+			else:
+				nb_correct_attribution[test_labels[i]] += 1
+			confusion_matrix[test_labels[i], prediction] += 1
+			nb_attribution[prediction] += 1
+			nb_class_element[test_labels[i]] += 1
 
-		Faites le test sur les données de test, et afficher :
-		- la matrice de confision (confusion matrix)
-		- l'accuracy
-		- la précision (precision)
-		- le rappel (recall)
-
-		Bien entendu ces tests doivent etre faits sur les données de test seulement
-
-		"""
+		precision = []
+		recall = []
+		for i in len(n):
+			precision.append(nb_correct_attribution[i] / nb_attribution[i])
+			recall.append(nb_correct_attribution[i] / nb_class_element[i])
 
 
-	# Vous pouvez rajouter d'autres méthodes et fonctions,
-	# il suffit juste de les commenter.
+		print confusion_matrix
+
+
+def distance (a, b):
+    if (len (a) != len (b)):
+        return (-1)
+    dist = 0
+    for i in range (len (a)):
+        dist += (a[i] - b[i])
+    return dist
+
+def getKNearestNeighbor (x, k, train):
+    distances = []
+    for i in range(len(train)):
+        distances.append(distance(x, train[i])) # Calculer toutes les distances
+    knn = []
+    for i in range(k):
+        p = float("inf")
+        for j in range(len(train)):
+            if distances[j] != 0 and distances[j] < p and j not in knn:
+                p = distances[j]
+                indice = j
+        knn.append(indice)
+    return knn
+
+def getPrediction(neighbors_label):
+    labels = list(set(neighbors_label))
+    votes = [0] * len(labels)
+    for n in range(len(neighbors_label)):
+        for i in range(len(labels)):
+            if neighbors_label[n] == labels[i]:
+                votes[i] += 1
+    return labels[votes.index(max(votes))]
+
+def getAccuracy(labels, predictions):
+    correct = 0
+    for x in range(len(labels)):
+        if labels[x] is predictions[x]:
+            correct += 1
+    return (correct/float(len(testSet))) * 100.0

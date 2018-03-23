@@ -1,6 +1,6 @@
 """
 Vous allez definir une classe pour chaque algorithme que vous allez développer,
-votre classe doit contenit au moins les 3 methodes definies ici bas, 
+votre classe doit contenit au moins les 3 methodes definies ici bas,
 	* train 	: pour entrainer le modèle sur l'ensemble d'entrainement
 	* predict 	: pour prédire la classe d'un exemple donné
 	* test 		: pour tester sur l'ensemble de test
@@ -40,7 +40,7 @@ class BayesNaif: #nom de la class à changer
 
 
 		------------
-		Après avoir fait l'entrainement, faites maintenant le test sur 
+		Après avoir fait l'entrainement, faites maintenant le test sur
 		les données d'entrainement
 		IMPORTANT :
 		Vous devez afficher ici avec la commande print() de python,
