@@ -1,14 +1,5 @@
-"""
-Vous allez definir une classe pour chaque algorithme que vous allez développer,
-votre classe doit contenit au moins les 3 methodes definies ici bas,
-	* train 	: pour entrainer le modèle sur l'ensemble d'entrainement
-	* predict 	: pour prédire la classe d'un exemple donné
-	* test 		: pour tester sur l'ensemble de test
-vous pouvez rajouter d'autres méthodes qui peuvent vous etre utiles, mais moi
-je vais avoir besoin de tester les méthodes test, predict et test de votre code.
-"""
-
 import numpy as np
+from collections import Counter, defaultdict
 
 
 # le nom de votre classe
@@ -88,3 +79,11 @@ class BayesNaif: #nom de la class à changer
 
 	# Vous pouvez rajouter d'autres méthodes et fonctions,
 	# il suffit juste de les commenter.
+
+	def occurrences(labels):
+		no_of_examples = len(labels)
+		prob = dict(Counter(labels))
+		for key in prob.keys():
+			prob[key] = prob[key] / float(no_of_examples)
+		return prob
+
