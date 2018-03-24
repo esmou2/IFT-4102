@@ -17,10 +17,6 @@ class Knn:
 
 
 	def predict(self, exemple, label):
-		labels = list(set(self.train_data_labels))
-		n = len(labels)
-		data_size = np.array(self.train_data).shape[0]
-
 		neighbors_indexes = getKNearestNeighbor(exemple, self.k, self.train_data)
 		return getPrediction(neighbors_indexes, self.train_data_labels)
 
@@ -79,16 +75,13 @@ def getKNearestNeighbor(x, k, train):
 	return knn
 
 def getPrediction(neighbors_indexes, neighbors_labels):
-	labels = []
-	for i in neighbors_indexes:
-		labels.append(neighbors_labels[i])
-	labels = list(set(labels))
-	votes = [0] * len(labels)
+	classes = list(set(neighbors_labels))
+	votes = [0] * len(classes)
 	for n in neighbors_indexes:
-		for i in range(len(labels)):
-			if neighbors_labels[n] == labels[i]:
+		for i in range(len(classes)):
+			if neighbors_labels[n] == classes[i]:
 				votes[i] += 1
-	return labels[votes.index(max(votes))]
+	return classes[votes.index(max(votes))]
 
 def getAccuracy(labels, predictions):
     correct = 0

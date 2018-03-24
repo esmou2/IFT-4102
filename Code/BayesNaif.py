@@ -33,6 +33,8 @@ class BayesNaif:
 			for i in range(m):
 				self.prob[cls][i] = occurrences(self.prob[cls][i])
 
+		self.test(train, train_labels)
+
 	def predict(self, exemple, label):
 		results = {}
 
@@ -49,8 +51,6 @@ class BayesNaif:
 		return max(results, key=lambda i: results[i])
 
 	def test(self, test, test_labels):
-		print "Test on test data: "
-
 		n = len(set(test_labels))
 		confusion_matrix = np.zeros((n,n))
 		nb_attribution = [0] * n # number of attribution to the class i
