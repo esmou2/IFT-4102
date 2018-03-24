@@ -7,54 +7,52 @@ class Knn:
 		self.k = k
 
 
-	def train(self, train, train_labels, x): #vous pouvez rajouter d'autres attribus au besoin
-		labels = list(set(train_labels))
-		n = len(labels)
-		data_size = np.array(train).shape[0]
+	def train(self, train, train_labels): #vous pouvez rajouter d'autres attribus au besoin
 
-		neighbors_indexes = getKNearestNeighbor(x, self.k, train)
-
-		return getPrediction(neighbors_indexes, train_labels)
+		self.train_data = train
+		self.train_data_labels = train_labels
+		print "Test on training data: "
+		self.test(train, train_labels)
 
 
 
 	def predict(self, exemple, label):
-		labels = list(set(exemple))
-		votes = [0] * len(labels)
-		for n in range(len(exemple)):
-			for i in range(len(labels)):
-				if exemple[n] == labels[i]:
-					votes[i] += 1
-		return labels[votes.index(max(votes))] == label
+		labels = list(set(self.train_data_labels))
+		n = len(labels)
+		data_size = np.array(self.train_data).shape[0]
+
+		neighbors_indexes = getKNearestNeighbor(exemple, self.k, self.train_data)
+		return getPrediction(neighbors_indexes, self.train_data_labels)
 
 
 	def test(self, test, test_labels):
-		error_count = 0
+		print "Test on test data: "
+
 		n = len(set(test_labels))
 		confusion_matrix = np.zeros((n,n))
-		nb_attribution = [0] * n
-		nb_correct_attribution = [0] * n
-		nb_class_element = [0] * n
+		nb_attribution = [0] * n # number of attribution to the class i
+		nb_correct_attribution = [0] * n # number of correct attribution to the class i
+		nb_class_element = [0] * n # number of element in the class i
 
 		for i in range(len(test)):
-			prediction = self.train(test, test_labels, test[i])
-			if prediction != test_labels[i]:
-				error_count += 1
-			else:
+			prediction = self.predict(test[i], test_labels[i])
+			if prediction == test_labels[i]:
 				nb_correct_attribution[test_labels[i]] += 1
-			confusion_matrix[test_labels[i], prediction] += 1
+
+			confusion_matrix[test_labels[i], prediction] += 1 # real, predicted
 			nb_attribution[prediction] += 1
 
 		no_classes = dict(Counter(test_labels))
 		precision = []
 		recall = []
 
-		print error_count
 		for i in range(n):
 			precision.append(nb_correct_attribution[i] / float(no_classes[i]))
 			recall.append(nb_correct_attribution[i] / float(no_classes[i]))
-		print "precision: ", precision
-		print "recall: ", recall
+
+		print "Precision: ", precision
+		print "Recall: ", recall
+		print "Confusion Matrix:"
 		print confusion_matrix
 
 
