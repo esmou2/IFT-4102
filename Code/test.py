@@ -16,6 +16,10 @@ train, train_labels, test, test_labels = load_datasets.load_congressional_datase
 
 knn = Knn.Knn(5)
 conversion_labels = ['republican','democrat']
+new_sample = [0,2,0,1,1,1,0,0,0,0,0,1,1,1,0,0]
+
+print conversion_labels[knn.train(train, train_labels, new_sample )]
+
 
 train = np.array(train)
 
@@ -40,7 +44,6 @@ for cls in classes:
     for j in range(cols):
         likelihoods[cls][j] = occurrences(likelihoods[cls][j])
 
-new_sample = [1,1,1,0,0,0,1,1,1,0,1,0,0,0,1,1]
 
 results = {}
 
