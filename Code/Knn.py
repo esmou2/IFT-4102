@@ -26,8 +26,6 @@ class Knn:
 
 
 	def test(self, test, test_labels):
-		print "Test on test data: "
-
 		n = len(set(test_labels))
 		confusion_matrix = np.zeros((n,n))
 		nb_attribution = [0] * n # number of attribution to the class i
@@ -40,7 +38,6 @@ class Knn:
 			predictions.append(prediction)
 			if prediction == test_labels[i]:
 				nb_correct_attribution[test_labels[i]] += 1
-
 			confusion_matrix[test_labels[i], prediction] += 1 # real, predicted
 			nb_attribution[prediction] += 1
 

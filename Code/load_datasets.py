@@ -45,7 +45,7 @@ def load_congressional_dataset(train_ratio):
     f = open('datasets/house-votes-84.data', 'r')
 
     # TODO : le code ici pour lire le dataset
-    data = np.genfromtxt(f, delimiter=",", dtype=None)
+    data = np.genfromtxt(f, delimiter=",", dtype=str)
 
     attributes = []
     classes = []
@@ -54,7 +54,7 @@ def load_congressional_dataset(train_ratio):
         attr = []
         classes.append(conversion_labels[line[0]])
         for j in range(len(line) - 1):
-            attr.append(conversion_labels[line[j + 1]])
+            attr.append(float(conversion_labels[line[j + 1]]))
         attributes.append(attr)
 
     np.random.shuffle(data)
@@ -84,19 +84,19 @@ def load_monks_dataset(numero_dataset):
     np.random.shuffle(data_train)
 
     train = []
-    train_label = []
+    train_labels = []
     for i in range(len(data_train)):
         line = data_train[i]
-        train.append(line[1:-1])
-        train_label.append(line[-1])
+        train.append([float(i) for i in line[1:-1]])
+        train_labels.append(int(line[0]))
 
-    random.shuffle(data_test)
+    np.random.shuffle(data_test)
 
     test = []
-    test_label = []
+    test_labels = []
     for i in range(len(data_test)):
         line = data_test[i]
-        test.append(line[1:-1])
-        test_label.append(line[-1])
+        test.append([float(i) for i in line[1:-1]])
+        test_labels.append(int(line[0]))
     # La fonction doit retourner 4 matrices (ou vecteurs) de type Numpy.
     return (train, train_labels, test, test_labels)
