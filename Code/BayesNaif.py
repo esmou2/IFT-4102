@@ -13,25 +13,25 @@ class BayesNaif:
 		self.classes = list(set(train_labels))
 		n, m  = np.shape(train)
 
-		self.class_occurences = occurrences(train_labels)
+		self.probabilities = get_prior_probabilies(train_labels)
 
-		self.prob = {}
+		self.attributes_probabilities = {}
 		for cls in self.classes:
-			self.prob[cls] = defaultdict(list)
+			self.attributes_probabilities[cls] = defaultdict(list)
 
 		for cls in self.classes:
-			row_indices = []
+			indexes = []
 			for i in range(n):
 				if train_labels[i] == cls:
-					row_indices.append(i)
-			subset = train[row_indices, :]
+					indexes .append(i)
+			subset = train[indexes , :]
 			r, c = np.shape(subset)
 			for i in range(c):
-				self.prob[cls][i] += list(subset[:,i])
+				self.attributes_probabilities[cls][i] += list(subset[:,i])
 
 		for cls in self.classes:
 			for i in range(m):
-				self.prob[cls][i] = occurrences(self.prob[cls][i])
+				self.attributes_probabilities[cls][i] = get_prior_probabilies(self.attributes_probabilities[cls][i])
 
 		self.test(train, train_labels)
 
@@ -39,11 +39,11 @@ class BayesNaif:
 		results = {}
 
 		for cls in self.classes:
-			class_probability = self.class_occurences[cls]
+			class_probability = self.probabilities[cls]
 			for i in range(len(exemple)):
-				relative_feature_values = self.prob[cls][i]
-				if exemple[i] in relative_feature_values.keys():
-					class_probability *= relative_feature_values[exemple[i]]
+				relative_attribute_values = self.attributes_probabilities[cls][i]
+				if exemple[i] in relative_attribute_values.keys():
+					class_probability *= relative_attribute_values[exemple[i]]
 				else:
 					class_probability *= 0
 				results[cls] = class_probability
@@ -83,7 +83,7 @@ class BayesNaif:
 
 
 
-def occurrences(labels):
+def get_prior_probabilies(labels):
 	no_of_examples = len(labels)
 	prob = dict(Counter(labels))
 	for key in prob.keys():
