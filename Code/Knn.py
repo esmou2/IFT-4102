@@ -33,9 +33,11 @@ class Knn:
 		nb_attribution = [0] * n # number of attribution to the class i
 		nb_correct_attribution = [0] * n # number of correct attribution to the class i
 		nb_class_element = [0] * n # number of element in the class i
+		predictions = [] # predicted classes
 
 		for i in range(len(test)):
 			prediction = self.predict(test[i], test_labels[i])
+			predictions.append(prediction)
 			if prediction == test_labels[i]:
 				nb_correct_attribution[test_labels[i]] += 1
 
@@ -50,6 +52,7 @@ class Knn:
 			precision.append(nb_correct_attribution[i] / float(no_classes[i]))
 			recall.append(nb_correct_attribution[i] / float(no_classes[i]))
 
+		print "Accuracy:", getAccuracy(test_labels, predictions)
 		print "Precision: ", precision
 		print "Recall: ", recall
 		print "Confusion Matrix:"
@@ -95,4 +98,4 @@ def getAccuracy(labels, predictions):
     for x in range(len(labels)):
         if labels[x] is predictions[x]:
             correct += 1
-    return (correct/float(len(testSet))) * 100.0
+    return (correct/float(len(labels))) * 100.0

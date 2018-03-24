@@ -12,7 +12,7 @@ def occurrences(labels):
 		return prob
 
 
-train, train_labels, test, test_labels = load_datasets.load_iris_dataset(0.5)
+train, train_labels, test, test_labels = load_datasets.load_iris_dataset(0.05)
 
 knn = Knn.Knn(5)
 new_sample_vote = [0,2,0,1,1,1,0,0,0,0,0,1,1,1,0,0] # republican,n,?,n,y,y,y,n,n,n,n,n,y,y,y,n,n
