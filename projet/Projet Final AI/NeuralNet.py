@@ -1,77 +1,72 @@
-"""
-Vous allez definir une classe pour chaque algorithme que vous allez développer,
-votre classe doit contenit au moins les 3 methodes definies ici bas, 
-	* train 	: pour entrainer le modèle sur l'ensemble d'entrainement
-	* predict 	: pour prédire la classe d'un exemple donné
-	* test 		: pour tester sur l'ensemble de test
-vous pouvez rajouter d'autres méthodes qui peuvent vous etre utiles, mais moi
-je vais avoir besoin de tester les méthodes train, predict et test de votre code.
-"""
-
 import numpy as np
 
+class NeuralNet:
 
-# le nom de votre classe
-# NeuralNet pour le modèle Réseaux de Neurones
-# DecisionTree le modèle des arbres de decision
+	def __init__(self, nHiddenLayers, nNeurons, inputSize, outputSize):
+		self.inputSize = inputSize
+		self.outputSize = outputSize
+		self.nHiddenLayers = nHiddenLayers
+		self.nNeurons = nNeurons
 
-class NeuralNet: #nom de la class à changer
-
-	def __init__(self, **kwargs):
-		"""
-		c'est un Initializer.
-		Vous pouvez passer d'autre paramètres au besoin,
-		c'est à vous d'utiliser vos propres notations
-		"""
-
-
-	def train(self, train, train_labels): #vous pouvez rajouter d'autres attribus au besoin
-		"""
-		c'est la méthode qui va entrainer votre modèle,
-		train est une matrice de taille nxm, avec
-		n : le nombre d'exemple d'entrainement dans le dataset
-		m : le mobre d'attribus (le nombre de caractéristiques)
-
-		train_labels : est une matrice de taille nx1
-
-		vous pouvez rajouter d'autres arguments, il suffit juste de
-		les expliquer en commentaire
+		self.layers = []
+		if self.nHiddenLayers > 0:
+			self.layers.append(NeuronLayer(self.inputSize, self.nNeurons))
+			for i in range(self.nHiddenLayers - 1):
+				self.layers.append(NeuronLayer(self.nNeurons, self.nNeurons))
+		self.layers.append(NeuronLayer(self.nNeurons, self.outputSize))
 
 
-
-		------------
-
-		"""
+	def train(self, train, train_labels):
+		o = self.forward(train)
+		self.backward(train, train_labels, o)
 
 	def predict(self, exemple, label):
-		"""
-		Prédire la classe d'un exemple donné en entrée
-		exemple est de taille 1xm
-
-		si la valeur retournée est la meme que la veleur dans label
-		alors l'exemple est bien classifié, si non c'est une missclassification
-
-		"""
+		pass
 
 	def test(self, test, test_labels):
-		"""
-		c'est la méthode qui va tester votre modèle sur les données de test
-		l'argument test est une matrice de taille nxm, avec 
-		n : le nombre d'exemple de test dans le dataset
-		m : le mobre d'attribus (le nombre de caractéristiques)
+		pass
 
-		test_labels : est une matrice taille nx1
+	def sigmoid(self, x,deriv=False):
+		if(deriv==True):
+			return x*(1-x)
 
-		vous pouvez rajouter d'autres arguments, il suffit juste de
-		les expliquer en commentaire
+		return 1/(1+np.exp(-x))
 
-		Faites le test sur les données de test, et afficher :
-		- la matrice de confision (confusion matrix)
-		- l'accuracy (ou le taux d'erreur)
+	def forward(self, X):
+		self.zList = []
+		lastz = self.sigmoid(np.dot(X, self.layers[0].synaptic_weights))
+		self.zList.append(lastz)
+		for w in self.layers[1:]:
+			lastz = self.sigmoid(np.dot(lastz, w.synaptic_weights))
+			self.zList.append(lastz)
 
-		Bien entendu ces tests doivent etre faits sur les données de test seulement
+		return self.zList[-1]
 
-		"""
-        
-	# Vous pouvez rajouter d'autres méthodes et fonctions,
-	# il suffit juste de les commenter.
+	def backward(self, X, y, o):
+		reversedzList = list(reversed(self.zList))
+		reversedLayersList = list(reversed(self.layers))
+		error = y - o
+		delta = error*self.sigmoid(o, True)
+
+		deltas = []
+		deltas.append(delta)
+
+		for i in range(len(self.zList) - 1):
+			error = delta.dot(reversedLayersList[i].synaptic_weights.T)
+			delta = error*self.sigmoid(reversedzList[i+1], True)
+			deltas.append(delta)
+
+		deltas = list(reversed(deltas))
+
+		self.layers[0].synaptic_weights += X.T.dot(deltas[0])
+		for i in range(1, len(self.layers)):
+			self.layers[i].synaptic_weights += self.zList[i - 1].T.dot(deltas[i])
+
+
+
+class NeuronLayer():
+    def __init__(self, number_of_inputs_per_neuron, number_of_neurons):
+        self.synaptic_weights = np.random.randn(number_of_inputs_per_neuron, number_of_neurons)
+
+    def __repr__(self):
+        return str(self.synaptic_weights)
