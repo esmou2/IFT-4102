@@ -26,10 +26,17 @@ class NeuralNet:
 		o = exemple
 		for l in self.layers:
 			o = self.sigmoid(np.dot(o, l.synaptic_weights))
-		return o
+		return o[0]
 
 	def test(self, test, test_labels):
-		pass
+		predictions = self.forward(test).T[0]
+		print "Accuracy: ", getAccuracy(test_labels, predictions)
+		return sum(test_labels - predictions)/float(len(predictions))
+        # confusion_matrix = np.zeros((n,n))
+        # for i in range(len(test)):
+        #     confusion_matrix[test_labels[i], prediction] += 1
+        # print "Confusion Matrix:"
+        # print confusion_matrix
 
 	def sigmoid(self, x,deriv=False):
 		if(deriv==True):
@@ -67,7 +74,12 @@ class NeuralNet:
 		for i in range(1, len(self.layers)):
 			self.layers[i].synaptic_weights += self.zList[i - 1].T.dot(deltas[i])
 
-
+def getAccuracy(labels, predictions):
+	correct = 0
+	for x in range(len(labels)):
+		if labels[x] - predictions[x] < 1e-10:
+			correct += 1
+	return (correct/float(len(labels))) * 100.0
 
 class NeuronLayer():
     def __init__(self, number_of_inputs_per_neuron, number_of_neurons):

@@ -14,7 +14,7 @@ class DecisionTree:
             cnt = Counter(a)
             self.average.append(cnt.most_common(1)[0][0])
         print "=== test train data ==="
-        self.test(train, train_labels)
+        # self.test(train, train_labels)
 
     def predict(self, exemple, label):
         sub_tree = self.tree
@@ -35,6 +35,8 @@ class DecisionTree:
             prediction = self.predict(test[i], test_labels[i])
             predictions.append(prediction)
             confusion_matrix[test_labels[i], prediction] += 1
+        print predictions
+        print test_labels
         print "Accuracy:", getAccuracy(test_labels, predictions)
         print "Confusion Matrix:"
         print confusion_matrix
@@ -83,7 +85,7 @@ def recursive_split(x, y):
 def getAccuracy(labels, predictions):
     correct = 0
     for x in range(len(labels)):
-        if labels[x] is predictions[x]:
+        if labels[x] == predictions[x]:
             correct += 1
     return (correct/float(len(labels))) * 100.0
 
