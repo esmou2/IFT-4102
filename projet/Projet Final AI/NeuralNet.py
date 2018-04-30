@@ -17,11 +17,16 @@ class NeuralNet:
 
 
 	def train(self, train, train_labels):
+		train_labels = np.array([[x] for x in train_labels], dtype=float)
+		train = np.array(train)
 		o = self.forward(train)
 		self.backward(train, train_labels, o)
 
 	def predict(self, exemple, label):
-		pass
+		o = exemple
+		for l in self.layers:
+			o = self.sigmoid(np.dot(o, l.synaptic_weights))
+		return o
 
 	def test(self, test, test_labels):
 		pass
